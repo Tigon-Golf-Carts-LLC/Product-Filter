@@ -2353,7 +2353,15 @@
 						AND price_meta.meta_value > '' ";
 			$sql .= $tax_query_sql['where'];
 
-			$prices = $wpdb->get_row( $sql );
+			// Tied to WC's product_query cache version so price-affecting product changes auto-invalidate.
+			$transient_version = class_exists( 'WC_Cache_Helper' ) ? WC_Cache_Helper::get_transient_version( 'product_query' ) : '';
+			$transient_key     = 'pf_price_' . md5( $mode . '|' . $sql . '|' . $transient_version );
+			$prices            = get_transient( $transient_key );
+
+			if ( false === $prices ) {
+				$prices = $wpdb->get_row( $sql );
+				set_transient( $transient_key, $prices, HOUR_IN_SECONDS );
+			}
 
 			if ( intval( $prices->min_price ) < 0 && intval( $prices->max_price ) <= 0 && $mode == 'yes' ) {
 				return self::get_filtered_price( 'no' );
@@ -2364,26 +2372,37 @@
 			}
 			else {
 
-				$_min = floor( $wpdb->get_var(
-					sprintf('
-						SELECT min(meta_value + 0)
-						FROM %1$s
-						LEFT JOIN %2$s ON %1$s.ID = %2$s.post_id
-						WHERE ( meta_key = \'%3$s\' OR meta_key = \'%4$s\' )
-						AND meta_value != ""
-						', $wpdb->posts, $wpdb->postmeta, '_price', '_min_variation_price' )
-					)
-				);
+				$fallback_key     = 'pf_price_fallback_' . $transient_version;
+				$fallback_cached  = get_transient( $fallback_key );
 
-				$_max = ceil( $wpdb->get_var(
-					sprintf('
-						SELECT max(meta_value + 0)
-						FROM %1$s
-						LEFT JOIN %2$s ON %1$s.ID = %2$s.post_id
-						WHERE ( meta_key = \'%3$s\' OR meta_key = \'%4$s\' )
-						AND meta_value != ""
-						', $wpdb->posts, $wpdb->postmeta, '_price', '_max_variation_price' )
-				) );
+				if ( false === $fallback_cached ) {
+					$_min = floor( $wpdb->get_var(
+						sprintf('
+							SELECT min(meta_value + 0)
+							FROM %1$s
+							LEFT JOIN %2$s ON %1$s.ID = %2$s.post_id
+							WHERE ( meta_key = \'%3$s\' OR meta_key = \'%4$s\' )
+							AND meta_value != ""
+							', $wpdb->posts, $wpdb->postmeta, '_price', '_min_variation_price' )
+						)
+					);
+
+					$_max = ceil( $wpdb->get_var(
+						sprintf('
+							SELECT max(meta_value + 0)
+							FROM %1$s
+							LEFT JOIN %2$s ON %1$s.ID = %2$s.post_id
+							WHERE ( meta_key = \'%3$s\' OR meta_key = \'%4$s\' )
+							AND meta_value != ""
+							', $wpdb->posts, $wpdb->postmeta, '_price', '_max_variation_price' )
+					) );
+
+					set_transient( $fallback_key, array( 'min' => $_min, 'max' => $_max ), HOUR_IN_SECONDS );
+				}
+				else {
+					$_min = $fallback_cached['min'];
+					$_max = $fallback_cached['max'];
+				}
 
 				$prices = new stdClass();
 
