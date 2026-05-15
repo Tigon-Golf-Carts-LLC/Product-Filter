@@ -212,17 +212,41 @@
 	cursor: pointer;
 }
 
-/* Buttons inside the form */
+/* Buttons inside the form (sale / out-of-stock toggles) */
 .xwoo-filter .prdctfltr_buttons {
-	padding: 16px 20px;
+	padding: 12px 20px 16px;
+	background: transparent;
+	border: none;
+}
+.xwoo-filter .prdctfltr_buttons span.prdctfltr_sale,
+.xwoo-filter .prdctfltr_buttons span.prdctfltr_instock,
+.xwoo-filter .prdctfltr_buttons span.prdctfltr_reset {
+	background: transparent !important;
+	border: none !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	display: block;
 }
 .xwoo-filter .prdctfltr_buttons label {
-	display: flex;
+	display: flex !important;
 	align-items: center;
-	gap: 0.5em;
-	padding: 10px 0;
+	gap: 0.6em;
+	padding: 10px 0 !important;
 	min-height: 44px;
+	margin: 0 !important;
+	background: transparent !important;
+	border: none !important;
 	cursor: pointer;
+}
+.xwoo-filter .prdctfltr_buttons label span:before {
+	color: var(--xwoo-accent) !important;
+	background: transparent !important;
+	border: none !important;
+}
+.xwoo-filter .prdctfltr_buttons label.prdctfltr_active span:before,
+.xwoo-filter .prdctfltr_buttons label:hover span:before {
+	color: var(--xwoo-accent) !important;
+	opacity: 0.85;
 }
 
 /* ───── Drawer / Full-screen overlay ─────
@@ -300,44 +324,52 @@
 	box-shadow: 0 10px 40px rgba(0,0,0,0.18);
 }
 
-/* Drawer header (sticky title bar with close X) */
+/* Drawer header (sticky title bar with close X pinned top-right) */
 .xwoo-filter-drawer-header {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	padding: 0 16px;
-	min-height: var(--xwoo-header-height);
-	border-bottom: 1px solid var(--xwoo-row-divider);
-	flex: 0 0 auto;
-	background: inherit;
 	position: sticky;
 	top: 0;
 	z-index: 2;
+	padding: 0 56px 0 20px;
+	min-height: var(--xwoo-header-height);
+	display: flex;
+	align-items: center;
+	border-bottom: 1px solid var(--xwoo-row-divider);
+	flex: 0 0 auto;
+	background: inherit;
 }
 .xwoo-filter-drawer-title {
 	font-size: 18px;
 	font-weight: 700;
 	letter-spacing: -0.01em;
+	flex: 1;
+	text-align: left;
 }
 .xwoo-filter-close {
-	border: 0;
-	background: transparent;
+	position: absolute !important;
+	top: 8px !important;
+	right: 8px !important;
+	width: 40px !important;
+	height: 40px !important;
+	padding: 0 !important;
+	margin: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	color: var(--xwoo-accent) !important;
 	cursor: pointer;
-	color: inherit;
-	padding: 10px;
-	margin: -10px;
 	line-height: 0;
 	border-radius: 50%;
-	width: 40px;
-	height: 40px;
-	display: inline-flex;
+	display: inline-flex !important;
 	align-items: center;
 	justify-content: center;
-	transition: background-color var(--xwoo-anim);
+	transition: background-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
+	z-index: 3;
 }
 .xwoo-filter-close:hover,
-.xwoo-filter-close:focus { background-color: rgba(0,0,0,0.06); }
+.xwoo-filter-close:focus { background-color: rgba(0,0,0,0.06) !important; }
+.xwoo-filter-close:active { transform: scale(0.92); }
+.xwoo-filter-close svg { width: 22px; height: 22px; stroke: currentColor; }
+.xwoo-filter-close svg path { stroke: currentColor; }
 
 .xwoo-filter-drawer-body {
 	flex: 1 1 auto;
@@ -355,8 +387,8 @@
 .xwoo-filter-drawer-footer {
 	flex: 0 0 auto;
 	display: flex;
-	gap: 8px;
-	padding: 12px 16px;
+	gap: 16px;
+	padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
 	border-top: 1px solid var(--xwoo-row-divider);
 	background: inherit;
 	position: sticky;
