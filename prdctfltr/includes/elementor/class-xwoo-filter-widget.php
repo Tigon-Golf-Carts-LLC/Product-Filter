@@ -134,12 +134,53 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'label'       => esc_html__( 'Display Mode', 'prdctfltr' ),
 				'type'        => \Elementor\Controls_Manager::SELECT,
 				'options'     => array(
-					'drawer'     => esc_html__( 'Off-canvas drawer (mobile-style menu)', 'prdctfltr' ),
+					'popup'      => esc_html__( 'Pop-up (centered modal)', 'prdctfltr' ),
+					'drawer'     => esc_html__( 'Off-canvas drawer (slides in from side)', 'prdctfltr' ),
 					'fullscreen' => esc_html__( 'Full-screen overlay', 'prdctfltr' ),
 					'inline'     => esc_html__( 'Inline (in place)', 'prdctfltr' ),
 				),
-				'default'     => 'drawer',
-				'description' => esc_html__( 'Drawer/full-screen modes hide the filter behind a button until clicked.', 'prdctfltr' ),
+				'default'     => 'popup',
+				'description' => esc_html__( 'All modes except inline hide the filter behind a button until clicked. Show Results / X / backdrop / Esc all close the overlay.', 'prdctfltr' ),
+			)
+		);
+
+		$this->add_responsive_control(
+			'popup_width',
+			array(
+				'label'      => esc_html__( 'Pop-up Width', 'prdctfltr' ),
+				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%', 'vw' ),
+				'range'      => array(
+					'px' => array( 'min' => 280, 'max' => 900 ),
+					'%'  => array( 'min' => 30,  'max' => 100 ),
+					'vw' => array( 'min' => 30,  'max' => 100 ),
+				),
+				'default'    => array( 'unit' => 'px', 'size' => 480 ),
+				'condition'  => array( 'display_mode' => 'popup' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .xwoo-filter-drawer.xwoo-mode-popup' => '--xwoo-popup-width: {{SIZE}}{{UNIT}};',
+					'.xwoo-filter-drawer.xwoo-mode-popup[data-xwoo-owner="xwoo-filter-{{ID}}"]' => '--xwoo-popup-width: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'popup_max_height',
+			array(
+				'label'      => esc_html__( 'Pop-up Max Height', 'prdctfltr' ),
+				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => array( 'px', '%', 'vh' ),
+				'range'      => array(
+					'px' => array( 'min' => 300, 'max' => 1200 ),
+					'%'  => array( 'min' => 40,  'max' => 100 ),
+					'vh' => array( 'min' => 40,  'max' => 95 ),
+				),
+				'default'    => array( 'unit' => 'vh', 'size' => 85 ),
+				'condition'  => array( 'display_mode' => 'popup' ),
+				'selectors'  => array(
+					'{{WRAPPER}} .xwoo-filter-drawer.xwoo-mode-popup' => '--xwoo-popup-max-h: {{SIZE}}{{UNIT}};',
+					'.xwoo-filter-drawer.xwoo-mode-popup[data-xwoo-owner="xwoo-filter-{{ID}}"]' => '--xwoo-popup-max-h: {{SIZE}}{{UNIT}};',
+				),
 			)
 		);
 
@@ -832,7 +873,7 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 			$this->render_trigger( $settings, $instance_id );
 		}
 
-		if ( 'drawer' === $display_mode || 'fullscreen' === $display_mode ) {
+		if ( 'drawer' === $display_mode || 'fullscreen' === $display_mode || 'popup' === $display_mode ) {
 			echo '<div class="xwoo-filter-backdrop" data-xwoo-close="1" aria-hidden="true"></div>';
 			echo '<div class="xwoo-filter-drawer" id="' . esc_attr( $instance_id ) . '" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">';
 			echo '<div class="xwoo-filter-drawer-panel">';

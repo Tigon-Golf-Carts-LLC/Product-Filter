@@ -154,6 +154,7 @@
 		var hasDrawer =
 			wrap.classList.contains('xwoo-mode-drawer') ||
 			wrap.classList.contains('xwoo-mode-fullscreen') ||
+			wrap.classList.contains('xwoo-mode-popup') ||
 			wrap.classList.contains('xwoo-mobile-drawer');
 		if (!hasDrawer) return;
 
@@ -184,7 +185,7 @@
 	function portalDrawer(wrap) {
 		// Skip the inline-with-mobile-drawer mode — that one needs to stay inside the wrap
 		// because it's the same element that renders inline on desktop.
-		if (wrap.classList.contains('xwoo-mobile-drawer') && !wrap.classList.contains('xwoo-mode-drawer') && !wrap.classList.contains('xwoo-mode-fullscreen')) {
+		if (wrap.classList.contains('xwoo-mobile-drawer') && !wrap.classList.contains('xwoo-mode-drawer') && !wrap.classList.contains('xwoo-mode-fullscreen') && !wrap.classList.contains('xwoo-mode-popup')) {
 			return;
 		}
 		var id = wrap.getAttribute('data-xwoo-id');
@@ -202,7 +203,7 @@
 			backdrop.dataset.xwooPortaled = '1';
 		}
 		// Mirror the wrap's mode classes onto the portaled elements so CSS can target them outside the wrap.
-		var modeClasses = ['xwoo-mode-drawer', 'xwoo-mode-fullscreen', 'xwoo-drawer-left', 'xwoo-drawer-right'];
+		var modeClasses = ['xwoo-mode-drawer', 'xwoo-mode-fullscreen', 'xwoo-mode-popup', 'xwoo-drawer-left', 'xwoo-drawer-right'];
 		modeClasses.forEach(function (cls) {
 			if (wrap.classList.contains(cls)) {
 				drawer.classList.add(cls);
