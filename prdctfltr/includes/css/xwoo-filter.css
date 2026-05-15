@@ -212,41 +212,17 @@
 	cursor: pointer;
 }
 
-/* Buttons inside the form (sale / out-of-stock toggles) */
+/* Buttons inside the form (sale / out-of-stock toggles) — left native */
 .xwoo-filter .prdctfltr_buttons {
-	padding: 12px 20px 16px;
-	background: transparent;
-	border: none;
-}
-.xwoo-filter .prdctfltr_buttons span.prdctfltr_sale,
-.xwoo-filter .prdctfltr_buttons span.prdctfltr_instock,
-.xwoo-filter .prdctfltr_buttons span.prdctfltr_reset {
-	background: transparent !important;
-	border: none !important;
-	padding: 0 !important;
-	margin: 0 !important;
-	display: block;
+	padding: 16px 20px;
 }
 .xwoo-filter .prdctfltr_buttons label {
-	display: flex !important;
+	display: flex;
 	align-items: center;
-	gap: 0.6em;
-	padding: 10px 0 !important;
+	gap: 0.5em;
+	padding: 10px 0;
 	min-height: 44px;
-	margin: 0 !important;
-	background: transparent !important;
-	border: none !important;
 	cursor: pointer;
-}
-.xwoo-filter .prdctfltr_buttons label span:before {
-	color: var(--xwoo-accent) !important;
-	background: transparent !important;
-	border: none !important;
-}
-.xwoo-filter .prdctfltr_buttons label.prdctfltr_active span:before,
-.xwoo-filter .prdctfltr_buttons label:hover span:before {
-	color: var(--xwoo-accent) !important;
-	opacity: 0.85;
 }
 
 /* ───── Drawer / Full-screen overlay ─────
@@ -397,30 +373,31 @@
 .xwoo-filter-reset,
 .xwoo-filter-apply {
 	flex: 1;
-	border: 0;
 	cursor: pointer;
-	padding: 14px 16px;
+	padding: 14px 16px !important;
 	min-height: 48px;
-	border-radius: 8px;
-	font-weight: 600;
-	font-size: 15px;
-	line-height: 1.2;
+	border-radius: 8px !important;
+	font-weight: 600 !important;
+	font-size: 15px !important;
+	line-height: 1.2 !important;
 	transition: background-color var(--xwoo-anim), color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
+	background: transparent !important;
+	color: var(--xwoo-accent) !important;
+	border: 2px solid var(--xwoo-accent) !important;
+	text-transform: none !important;
+	letter-spacing: 0 !important;
+}
+.xwoo-filter-reset:hover,
+.xwoo-filter-apply:hover,
+.xwoo-filter-reset:focus,
+.xwoo-filter-apply:focus {
+	background: var(--xwoo-accent) !important;
+	color: #fff !important;
+	border-color: var(--xwoo-accent) !important;
 }
 .xwoo-filter-reset:active,
 .xwoo-filter-apply:active { transform: scale(0.98); }
-.xwoo-filter-reset {
-	background: transparent;
-	color: inherit;
-	border: 1px solid rgba(0,0,0,0.15);
-}
-.xwoo-filter-reset:hover { background: rgba(0,0,0,0.04); }
-.xwoo-filter-apply {
-	background: var(--xwoo-accent);
-	color: #fff;
-}
-.xwoo-filter-apply:hover { filter: brightness(0.92); }
 
 /* Body lock while drawer open */
 body.xwoo-filter-locked { overflow: hidden; }
