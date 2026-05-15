@@ -99,11 +99,11 @@
 		if (openWrap && openWrap !== wrap) closeDrawer(openWrap);
 
 		lastFocused = document.activeElement;
-		wrap.classList.add('xwoo-open');
+		setOpenState(wrap, true);
 		document.body.classList.add('xwoo-filter-locked');
 		openWrap = wrap;
 
-		var dialog = wrap.querySelector('.xwoo-filter-drawer, .xwoo-filter-inline');
+		var dialog = getDrawer(wrap);
 		if (dialog) {
 			dialog.setAttribute('aria-hidden', 'false');
 			var first = focusable(dialog)[0];
@@ -121,9 +121,9 @@
 	function closeDrawer(wrap) {
 		wrap = wrap || openWrap;
 		if (!wrap) return;
-		wrap.classList.remove('xwoo-open');
+		setOpenState(wrap, false);
 		document.body.classList.remove('xwoo-filter-locked');
-		var dialog = wrap.querySelector('.xwoo-filter-drawer, .xwoo-filter-inline');
+		var dialog = getDrawer(wrap);
 		if (dialog) dialog.setAttribute('aria-hidden', 'true');
 		var trigger = wrap.querySelector('.xwoo-filter-trigger');
 		if (trigger) trigger.setAttribute('aria-expanded', 'false');
@@ -135,7 +135,7 @@
 
 	function trapFocus(wrap, e) {
 		if (e.key !== 'Tab') return;
-		var dialog = wrap.querySelector('.xwoo-filter-drawer, .xwoo-filter-inline');
+		var dialog = getDrawer(wrap);
 		if (!dialog) return;
 		var els = focusable(dialog);
 		if (!els.length) return;
@@ -157,19 +157,82 @@
 			wrap.classList.contains('xwoo-mobile-drawer');
 		if (!hasDrawer) return;
 
+		// Portal the drawer + backdrop to <body> so they aren't trapped inside a
+		// transformed Elementor ancestor (which breaks position: fixed). We keep
+		// the original wrap element so events keep working — open/close handlers
+		// look up the drawer via data-attribute now instead of querySelector.
+		portalDrawer(wrap);
+
 		on(wrap, 'click', '[data-xwoo-open]', function () { openDrawer(wrap); });
+		// Backdrop and close button live outside wrap once portaled, so bind on document for them:
+		// (handled in the global delegated handler below).
 		on(wrap, 'click', '[data-xwoo-close]', function () { closeDrawer(wrap); });
 
 		on(wrap, 'click', '[data-xwoo-reset]', function () {
-			var form = wrap.querySelector('form.prdctfltr_woocommerce_ordering');
+			var form = getDrawer(wrap) ? getDrawer(wrap).querySelector('form.prdctfltr_woocommerce_ordering') : wrap.querySelector('form.prdctfltr_woocommerce_ordering');
 			if (!form) return;
-			// Uncheck everything and let the existing plugin JS pick up the change.
 			each(form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked'), function (input) {
 				input.checked = false;
 				input.dispatchEvent(new Event('change', { bubbles: true }));
 			});
 			each(form.querySelectorAll('input[type="hidden"][name]'), function (input) { input.value = ''; });
 		});
+	}
+
+	function portalDrawer(wrap) {
+		// Skip the inline-with-mobile-drawer mode — that one needs to stay inside the wrap
+		// because it's the same element that renders inline on desktop.
+		if (wrap.classList.contains('xwoo-mobile-drawer') && !wrap.classList.contains('xwoo-mode-drawer') && !wrap.classList.contains('xwoo-mode-fullscreen')) {
+			return;
+		}
+		var id = wrap.getAttribute('data-xwoo-id');
+		if (!id) return;
+
+		var drawer   = wrap.querySelector('.xwoo-filter-drawer');
+		var backdrop = wrap.querySelector('.xwoo-filter-backdrop');
+		if (!drawer || drawer.dataset.xwooPortaled === '1') return;
+
+		// Tag both with the owning wrap id so the global handlers can route close events.
+		drawer.dataset.xwooOwner = id;
+		drawer.dataset.xwooPortaled = '1';
+		if (backdrop) {
+			backdrop.dataset.xwooOwner = id;
+			backdrop.dataset.xwooPortaled = '1';
+		}
+		// Mirror the wrap's mode classes onto the portaled elements so CSS can target them outside the wrap.
+		var modeClasses = ['xwoo-mode-drawer', 'xwoo-mode-fullscreen', 'xwoo-drawer-left', 'xwoo-drawer-right'];
+		modeClasses.forEach(function (cls) {
+			if (wrap.classList.contains(cls)) {
+				drawer.classList.add(cls);
+				if (backdrop) backdrop.classList.add(cls);
+			}
+		});
+
+		document.body.appendChild(drawer);
+		if (backdrop) document.body.appendChild(backdrop);
+	}
+
+	function getDrawer(wrap) {
+		if (!wrap) return null;
+		var id = wrap.getAttribute('data-xwoo-id');
+		if (!id) return wrap.querySelector('.xwoo-filter-drawer, .xwoo-filter-inline');
+		return document.querySelector('.xwoo-filter-drawer[data-xwoo-owner="' + id + '"]') ||
+		       wrap.querySelector('.xwoo-filter-drawer, .xwoo-filter-inline');
+	}
+
+	function getBackdrop(wrap) {
+		var id = wrap.getAttribute('data-xwoo-id');
+		if (!id) return wrap.querySelector('.xwoo-filter-backdrop');
+		return document.querySelector('.xwoo-filter-backdrop[data-xwoo-owner="' + id + '"]') ||
+		       wrap.querySelector('.xwoo-filter-backdrop');
+	}
+
+	function setOpenState(wrap, open) {
+		wrap.classList.toggle('xwoo-open', open);
+		var drawer   = getDrawer(wrap);
+		var backdrop = getBackdrop(wrap);
+		if (drawer)   drawer.classList.toggle('xwoo-open', open);
+		if (backdrop) backdrop.classList.toggle('xwoo-open', open);
 	}
 
 	function activeCount(wrap) {
@@ -215,6 +278,32 @@
 				return;
 			}
 			trapFocus(openWrap, e);
+		});
+
+		// Portaled close/backdrop clicks: route by owner id back to the originating wrap.
+		document.addEventListener('click', function (e) {
+			var closeEl = e.target.closest('.xwoo-filter-drawer[data-xwoo-owner] [data-xwoo-close], .xwoo-filter-backdrop[data-xwoo-owner][data-xwoo-close]');
+			if (!closeEl) return;
+			var owner = closeEl.closest('[data-xwoo-owner]');
+			if (!owner) return;
+			var id = owner.getAttribute('data-xwoo-owner');
+			var wrap = document.querySelector('.xwoo-filter-wrap[data-xwoo-id="' + id + '"]');
+			if (wrap) closeDrawer(wrap);
+		});
+
+		// Portaled reset clicks
+		document.addEventListener('click', function (e) {
+			var resetEl = e.target.closest('.xwoo-filter-drawer[data-xwoo-owner] [data-xwoo-reset]');
+			if (!resetEl) return;
+			var drawer = resetEl.closest('.xwoo-filter-drawer');
+			if (!drawer) return;
+			var form = drawer.querySelector('form.prdctfltr_woocommerce_ordering');
+			if (!form) return;
+			each(form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked'), function (input) {
+				input.checked = false;
+				input.dispatchEvent(new Event('change', { bubbles: true }));
+			});
+			each(form.querySelectorAll('input[type="hidden"][name]'), function (input) { input.value = ''; });
 		});
 	}
 
