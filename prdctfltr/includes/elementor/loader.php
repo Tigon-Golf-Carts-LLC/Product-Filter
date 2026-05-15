@@ -32,21 +32,30 @@ if ( ! class_exists( 'XforWC_Elementor_Loader' ) ) :
 		}
 
 		public static function register_assets() {
-			$plugin_url = plugin_dir_url( dirname( __FILE__, 2 ) . '/prdctfltr.php' );
-			$version    = defined( 'XforWC_Product_Filters::$version' ) ? \XforWC_Product_Filters::$version : '1.0.0';
+			$plugin_dir = dirname( __FILE__, 2 ); // .../prdctfltr/includes
+			$plugin_root = dirname( $plugin_dir );  // .../prdctfltr
+			$plugin_url = plugin_dir_url( $plugin_root . '/prdctfltr.php' );
+
+			$css_path = $plugin_root . '/includes/css/xwoo-filter.css';
+			$js_path  = $plugin_root . '/includes/js/xwoo-filter.js';
+
+			// Use filemtime so the version string changes whenever the asset
+			// changes — bypasses browser/CDN caching of older builds.
+			$css_ver = file_exists( $css_path ) ? filemtime( $css_path ) : '1.0.0';
+			$js_ver  = file_exists( $js_path )  ? filemtime( $js_path )  : '1.0.0';
 
 			wp_register_style(
 				'xwoo-filter',
 				$plugin_url . 'includes/css/xwoo-filter.css',
 				array(),
-				$version
+				$css_ver
 			);
 
 			wp_register_script(
 				'xwoo-filter',
 				$plugin_url . 'includes/js/xwoo-filter.js',
 				array(),
-				$version,
+				$js_ver,
 				true
 			);
 		}
