@@ -16,54 +16,79 @@
 .xwoo-filter-wrap *::before,
 .xwoo-filter-wrap *::after { box-sizing: border-box; }
 
-/* ───── Trigger button (the "open menu" affordance) ───── */
+/* ───── Trigger button (the "open menu" affordance) ─────
+   Transparent, small, icon-led. Theme button rules (Astra/Woo) get heavy-handed,
+   so override with !important. */
 .xwoo-filter-trigger-wrap {
 	display: flex;
 	width: 100%;
-	margin-bottom: 1rem;
+	margin-bottom: 0.75rem;
 }
 .xwoo-filter-trigger {
-	display: inline-flex;
+	display: inline-flex !important;
 	align-items: center;
-	gap: 0.6em;
-	border: 1px solid currentColor;
-	background: transparent;
-	color: inherit;
+	gap: 0.5em;
+	background: transparent !important;
+	background-color: transparent !important;
+	background-image: none !important;
+	border: 0 !important;
+	box-shadow: none !important;
+	color: var(--xwoo-accent) !important;
 	cursor: pointer;
 	font: inherit;
-	line-height: 1.2;
-	padding: 12px 20px;
-	min-height: 44px;
-	border-radius: 8px;
-	transition: background-color var(--xwoo-anim), color var(--xwoo-anim), border-color var(--xwoo-anim), transform 120ms ease;
+	font-weight: 600 !important;
+	font-size: 14px !important;
+	line-height: 1.2 !important;
+	padding: 6px 8px !important;
+	min-height: 0 !important;
+	height: auto !important;
+	border-radius: 6px !important;
+	letter-spacing: 0 !important;
+	text-transform: none !important;
+	transition: opacity var(--xwoo-anim), transform 120ms ease, background-color var(--xwoo-anim);
 	-webkit-appearance: none;
 	appearance: none;
 	-webkit-tap-highlight-color: transparent;
 }
-.xwoo-filter-trigger:active { transform: scale(0.98); }
-.xwoo-filter-trigger:focus { outline: none; }
+.xwoo-filter-trigger:hover,
+.xwoo-filter-trigger:focus {
+	background: rgba(0,0,0,0.05) !important;
+	color: var(--xwoo-accent) !important;
+	outline: none;
+}
+.xwoo-filter-trigger:active { transform: scale(0.96); }
 .xwoo-filter-trigger-icon {
 	display: inline-flex;
 	align-items: center;
 	line-height: 0;
-	font-size: 1.1em;
+	font-size: 20px;
 }
 .xwoo-filter-trigger-icon svg,
-.xwoo-filter-trigger-icon i { width: 1em; height: 1em; font-size: 1em; }
-.xwoo-filter-trigger-text { font-weight: 600; }
+.xwoo-filter-trigger-icon i {
+	width: 1em;
+	height: 1em;
+	font-size: 1em;
+	color: var(--xwoo-accent) !important;
+	fill: currentColor;
+}
+.xwoo-filter-trigger-text {
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
 .xwoo-filter-trigger-count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-width: 1.5em;
-	height: 1.5em;
-	padding: 0 0.45em;
+	min-width: 1.4em;
+	height: 1.4em;
+	padding: 0 0.4em;
 	border-radius: 999px;
 	background: var(--xwoo-accent);
 	color: #fff;
-	font-size: 0.75em;
+	font-size: 0.7em;
 	font-weight: 700;
-	margin-left: 0.25em;
+	margin-left: 0.2em;
 }
 .xwoo-filter-trigger-count[hidden] { display: none; }
 
@@ -322,14 +347,17 @@
 }
 .xwoo-filter-close {
 	position: absolute !important;
-	top: 8px !important;
-	right: 8px !important;
-	width: 40px !important;
-	height: 40px !important;
+	top: 12px !important;
+	right: 12px !important;
+	width: 32px !important;
+	height: 32px !important;
 	padding: 0 !important;
 	margin: 0 !important;
 	border: 0 !important;
 	background: transparent !important;
+	background-color: transparent !important;
+	background-image: none !important;
+	box-shadow: none !important;
 	color: var(--xwoo-accent) !important;
 	cursor: pointer;
 	line-height: 0;
@@ -340,11 +368,16 @@
 	transition: background-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
 	z-index: 3;
+	min-height: 0 !important;
+	min-width: 0 !important;
 }
 .xwoo-filter-close:hover,
-.xwoo-filter-close:focus { background-color: rgba(0,0,0,0.06) !important; }
+.xwoo-filter-close:focus {
+	background-color: rgba(0,0,0,0.06) !important;
+	color: var(--xwoo-accent) !important;
+}
 .xwoo-filter-close:active { transform: scale(0.92); }
-.xwoo-filter-close svg { width: 22px; height: 22px; stroke: currentColor; }
+.xwoo-filter-close svg { width: 18px; height: 18px; stroke: currentColor; }
 .xwoo-filter-close svg path { stroke: currentColor; }
 
 .xwoo-filter-drawer-body {
@@ -359,12 +392,12 @@
 .xwoo-filter-drawer-body .xwoo-filter > .prdctfltr_wc { padding: 0; }
 .xwoo-filter-drawer-body .xwoo-filter form { margin: 0; }
 
-/* Drawer footer (sticky action bar) */
+/* Drawer footer (sticky action bar): even spacing — outer padding equals gap */
 .xwoo-filter-drawer-footer {
 	flex: 0 0 auto;
 	display: flex;
-	gap: 16px;
-	padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+	gap: 20px;
+	padding: 20px 20px calc(20px + env(safe-area-inset-bottom));
 	border-top: 1px solid var(--xwoo-row-divider);
 	background: inherit;
 	position: sticky;
