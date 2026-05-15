@@ -104,6 +104,15 @@ if ( !class_exists( 'XforWC_Product_Filters' ) ) :
 
 			include_once( 'includes/pf-widget.php' );
 
+			// Elementor integration loads in both admin (editor) and frontend contexts.
+			if ( did_action( 'elementor/loaded' ) || class_exists( 'Elementor\\Plugin' ) ) {
+				include_once( 'includes/elementor/loader.php' );
+			} else {
+				add_action( 'elementor/loaded', function() {
+					include_once dirname( __FILE__ ) . '/includes/elementor/loader.php';
+				} );
+			}
+
 			if ( $this->is_request( 'admin' ) ) {
 				$this->admin_includes();
 			}
