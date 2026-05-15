@@ -382,13 +382,12 @@
 	min-width: 0;
 }
 
-/* Close button — pinned to top-right of the panel.
-   High-specificity overrides (.xwoo-filter-drawer-panel > .xwoo-filter-drawer-header > button.xwoo-filter-close)
-   plus !important on every Astra/Woo-touched property so theme button rules can't recolour or resize it. */
-button.xwoo-filter-close,
-.xwoo-filter-drawer-panel button.xwoo-filter-close,
-.xwoo-filter-drawer button.xwoo-filter-close,
-.xwoo-filter-drawer-header > button.xwoo-filter-close {
+/* Close button — direct child of .xwoo-filter-drawer, pinned to its top-right.
+   The drawer is position:fixed (or relative as fallback) so absolute positioning
+   pins to the drawer corner, not to whatever nested element it lives in. */
+.xwoo-filter-drawer > button.xwoo-filter-close,
+.xwoo-filter-drawer > .xwoo-filter-close,
+button.xwoo-filter-close {
 	position: absolute !important;
 	top: 12px !important;
 	right: 12px !important;
@@ -416,17 +415,18 @@ button.xwoo-filter-close,
 	justify-content: center !important;
 	transition: background-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
-	z-index: 3;
+	z-index: 10;
 	font-size: 0 !important;
 	float: none !important;
 	text-transform: none !important;
 	letter-spacing: 0 !important;
 	white-space: nowrap !important;
+	flex: none !important;
 }
+.xwoo-filter-drawer > button.xwoo-filter-close:hover,
+.xwoo-filter-drawer > button.xwoo-filter-close:focus,
 button.xwoo-filter-close:hover,
-button.xwoo-filter-close:focus,
-.xwoo-filter-drawer-panel button.xwoo-filter-close:hover,
-.xwoo-filter-drawer-panel button.xwoo-filter-close:focus {
+button.xwoo-filter-close:focus {
 	background-color: rgba(0,0,0,0.06) !important;
 	color: var(--xwoo-accent) !important;
 }
@@ -438,7 +438,7 @@ button.xwoo-filter-close svg {
 	fill: none !important;
 	display: block !important;
 }
-button.xwoo-filter-close svg path { stroke: currentColor !important; }
+button.xwoo-filter-close svg path { stroke: currentColor !important; fill: none !important; }
 
 .xwoo-filter-drawer-body {
 	flex: 1 1 auto;

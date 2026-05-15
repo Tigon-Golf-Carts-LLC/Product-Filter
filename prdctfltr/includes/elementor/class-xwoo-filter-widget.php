@@ -977,6 +977,13 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 		if ( 'drawer' === $display_mode || 'fullscreen' === $display_mode || 'popup' === $display_mode ) {
 			echo '<div class="xwoo-filter-backdrop" data-xwoo-close="1" aria-hidden="true"></div>';
 			echo '<div class="xwoo-filter-drawer" id="' . esc_attr( $instance_id ) . '" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">';
+
+			// Close button as a direct child of the drawer so position:absolute
+			// pins it to the drawer's top-right corner regardless of header layout.
+			echo '<button type="button" class="xwoo-filter-close" data-xwoo-close="1" aria-label="' . esc_attr__( 'Close filters', 'prdctfltr' ) . '">';
+			echo '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" fill="none"/></svg>';
+			echo '</button>';
+
 			echo '<div class="xwoo-filter-drawer-panel">';
 			$this->render_drawer_header( $settings );
 			echo '<div class="xwoo-filter-drawer-body">';
@@ -1045,10 +1052,9 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 		$title = isset( $settings['drawer_title'] ) && '' !== $settings['drawer_title'] ? $settings['drawer_title'] : esc_html__( 'Filters', 'prdctfltr' );
 		echo '<div class="xwoo-filter-drawer-header">';
 		echo '<span class="xwoo-filter-drawer-title">' . esc_html( $title ) . '</span>';
-		echo '<button type="button" class="xwoo-filter-close" data-xwoo-close="1" aria-label="' . esc_attr__( 'Close filters', 'prdctfltr' ) . '">';
-		echo '<svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-		echo '</button>';
 		echo '</div>';
+		// Close button moved out of header — it's rendered as a direct child of
+		// .xwoo-filter-drawer so it always pins to the drawer's top-right corner.
 	}
 
 	private function render_drawer_footer() {
