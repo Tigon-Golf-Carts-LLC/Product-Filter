@@ -937,6 +937,35 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 			return;
 		}
 
+		// Force-enqueue assets here too; the wp_enqueue_scripts hook can miss
+		// edge cases in Elementor's editor preview / AJAX renders.
+		wp_enqueue_style( 'xwoo-filter' );
+		wp_enqueue_script( 'xwoo-filter' );
+
+		// Inline critical CSS as a safety net: cache busting + Elementor preview
+		// re-renders sometimes don't pick up external stylesheets fast enough.
+		// These rules MUST land for the popup to behave correctly.
+		static $printed_critical_css = false;
+		if ( ! $printed_critical_css ) {
+			$printed_critical_css = true;
+			echo '<style id="xwoo-filter-critical">' .
+				'.xwoo-filter-drawer{position:fixed!important;top:0!important;bottom:0!important;z-index:99999;transform:translateX(-100%);visibility:hidden;display:flex!important;flex-direction:column;margin:0!important;}' .
+				'.xwoo-filter-drawer.xwoo-mode-popup,.xwoo-mode-popup .xwoo-filter-drawer{top:50%!important;left:50%!important;bottom:auto!important;right:auto!important;width:min(480px,calc(100vw - 32px))!important;max-height:85vh;transform:translate(-50%,-50%) scale(.96);opacity:0;border-radius:12px;overflow:hidden;height:auto!important;}' .
+				'.xwoo-filter-drawer.xwoo-mode-popup.xwoo-open,.xwoo-mode-popup .xwoo-filter-drawer.xwoo-open{transform:translate(-50%,-50%) scale(1)!important;opacity:1;visibility:visible;}' .
+				'.xwoo-filter-drawer.xwoo-mode-drawer.xwoo-drawer-left{left:0!important;right:auto!important;transform:translateX(-100%);}' .
+				'.xwoo-filter-drawer.xwoo-mode-drawer.xwoo-drawer-right{right:0!important;left:auto!important;transform:translateX(100%);}' .
+				'.xwoo-filter-drawer.xwoo-mode-fullscreen{inset:0!important;width:100vw!important;max-width:100vw!important;transform:translateY(100%);}' .
+				'.xwoo-filter-drawer.xwoo-open{transform:translate(0,0)!important;visibility:visible;}' .
+				'.xwoo-mode-popup .xwoo-filter-drawer.xwoo-open{transform:translate(-50%,-50%) scale(1)!important;}' .
+				'.xwoo-filter-backdrop{position:fixed!important;inset:0!important;background:rgba(0,0,0,.55);opacity:0;visibility:hidden;z-index:99998;pointer-events:none;}' .
+				'.xwoo-filter-backdrop.xwoo-open{opacity:1;visibility:visible;pointer-events:auto;}' .
+				'.xwoo-filter-drawer-panel{position:relative!important;background:#fff;width:100%;height:100%;display:flex;flex-direction:column;box-shadow:0 10px 40px rgba(0,0,0,.18);}' .
+				'.xwoo-filter-drawer>button.xwoo-filter-close,button.xwoo-filter-close{position:absolute!important;top:12px!important;right:12px!important;left:auto!important;bottom:auto!important;width:32px!important;height:32px!important;min-width:0!important;min-height:0!important;padding:0!important;margin:0!important;border:0!important;background:transparent!important;background-color:transparent!important;background-image:none!important;box-shadow:none!important;color:#af1f31!important;border-radius:50%!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;z-index:10;font-size:0!important;line-height:0!important;cursor:pointer!important;float:none!important;}' .
+				'button.xwoo-filter-close svg{width:18px!important;height:18px!important;stroke:currentColor!important;fill:none!important;display:block!important;}' .
+				'body.xwoo-filter-locked{overflow:hidden;}' .
+			'</style>';
+		}
+
 		$settings = $this->get_settings_for_display();
 
 		$display_mode    = isset( $settings['display_mode'] ) ? $settings['display_mode'] : 'inline';

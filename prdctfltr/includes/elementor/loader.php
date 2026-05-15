@@ -12,7 +12,11 @@ if ( ! class_exists( 'XforWC_Elementor_Loader' ) ) :
 			// Elementor calls this once it's ready. If Elementor isn't installed, this hook never fires.
 			add_action( 'elementor/widgets/register', array( __CLASS__, 'register_widgets' ) );
 			add_action( 'elementor/elements/categories_registered', array( __CLASS__, 'register_category' ) );
+			// Register on every plausible hook so the handles exist whenever Elementor tries to enqueue them.
+			add_action( 'init', array( __CLASS__, 'register_assets' ) );
 			add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_assets' ) );
+			add_action( 'elementor/frontend/after_register_styles', array( __CLASS__, 'register_assets' ) );
+			add_action( 'elementor/frontend/after_register_scripts', array( __CLASS__, 'register_assets' ) );
 			add_action( 'elementor/editor/after_enqueue_styles', array( __CLASS__, 'register_assets' ) );
 		}
 
