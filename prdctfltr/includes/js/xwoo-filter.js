@@ -158,25 +158,27 @@
 		if (!hasDrawer) return;
 
 		// Portal the drawer + backdrop to <body> so they aren't trapped inside a
-		// transformed Elementor ancestor (which breaks position: fixed). We keep
-		// the original wrap element so events keep working — open/close handlers
-		// look up the drawer via data-attribute now instead of querySelector.
+		// transformed Elementor ancestor (which breaks position: fixed). The wrap
+		// stays in place for the trigger; data-xwoo-owner links them back.
 		portalDrawer(wrap);
 
+		// Trigger button stays inside wrap, so this still works.
 		on(wrap, 'click', '[data-xwoo-open]', function () { openDrawer(wrap); });
-		// Backdrop and close button live outside wrap once portaled, so bind on document for them:
-		// (handled in the global delegated handler below).
-		on(wrap, 'click', '[data-xwoo-close]', function () { closeDrawer(wrap); });
 
-		on(wrap, 'click', '[data-xwoo-reset]', function () {
-			var form = getDrawer(wrap) ? getDrawer(wrap).querySelector('form.prdctfltr_woocommerce_ordering') : wrap.querySelector('form.prdctfltr_woocommerce_ordering');
-			if (!form) return;
-			each(form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked'), function (input) {
-				input.checked = false;
-				input.dispatchEvent(new Event('change', { bubbles: true }));
-			});
-			each(form.querySelectorAll('input[type="hidden"][name]'), function (input) { input.value = ''; });
-		});
+		// Close + reset clicks are handled by the global delegated handler in init()
+		// since the buttons may have been portaled out of the wrap.
+	}
+
+	function findOwningWrap(el) {
+		// 1) Inside a portaled drawer/backdrop? Look up by data-xwoo-owner.
+		var owner = el.closest('[data-xwoo-owner]');
+		if (owner) {
+			var id = owner.getAttribute('data-xwoo-owner');
+			var wrap = document.querySelector('.xwoo-filter-wrap[data-xwoo-id="' + id + '"]');
+			if (wrap) return wrap;
+		}
+		// 2) Otherwise look upward for the wrap.
+		return el.closest('.xwoo-filter-wrap');
 	}
 
 	function portalDrawer(wrap) {
@@ -280,30 +282,29 @@
 			trapFocus(openWrap, e);
 		});
 
-		// Portaled close/backdrop clicks: route by owner id back to the originating wrap.
+		// One delegated click handler that closes/resets regardless of whether the
+		// drawer is portaled or not. Works for: close X, backdrop, "Show results"
+		// footer button, and "Clear all" reset button.
 		document.addEventListener('click', function (e) {
-			var closeEl = e.target.closest('.xwoo-filter-drawer[data-xwoo-owner] [data-xwoo-close], .xwoo-filter-backdrop[data-xwoo-owner][data-xwoo-close]');
-			if (!closeEl) return;
-			var owner = closeEl.closest('[data-xwoo-owner]');
-			if (!owner) return;
-			var id = owner.getAttribute('data-xwoo-owner');
-			var wrap = document.querySelector('.xwoo-filter-wrap[data-xwoo-id="' + id + '"]');
-			if (wrap) closeDrawer(wrap);
-		});
-
-		// Portaled reset clicks
-		document.addEventListener('click', function (e) {
-			var resetEl = e.target.closest('.xwoo-filter-drawer[data-xwoo-owner] [data-xwoo-reset]');
-			if (!resetEl) return;
-			var drawer = resetEl.closest('.xwoo-filter-drawer');
-			if (!drawer) return;
-			var form = drawer.querySelector('form.prdctfltr_woocommerce_ordering');
-			if (!form) return;
-			each(form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked'), function (input) {
-				input.checked = false;
-				input.dispatchEvent(new Event('change', { bubbles: true }));
-			});
-			each(form.querySelectorAll('input[type="hidden"][name]'), function (input) { input.value = ''; });
+			var closeEl = e.target.closest('[data-xwoo-close]');
+			if (closeEl) {
+				var wrap = findOwningWrap(closeEl);
+				if (wrap) closeDrawer(wrap);
+				return;
+			}
+			var resetEl = e.target.closest('[data-xwoo-reset]');
+			if (resetEl) {
+				var ownerWrap = findOwningWrap(resetEl);
+				var drawer = ownerWrap ? getDrawer(ownerWrap) : null;
+				var form = drawer ? drawer.querySelector('form.prdctfltr_woocommerce_ordering') : null;
+				if (!form && ownerWrap) form = ownerWrap.querySelector('form.prdctfltr_woocommerce_ordering');
+				if (!form) return;
+				each(form.querySelectorAll('input[type="checkbox"]:checked, input[type="radio"]:checked'), function (input) {
+					input.checked = false;
+					input.dispatchEvent(new Event('change', { bubbles: true }));
+				});
+				each(form.querySelectorAll('input[type="hidden"][name]'), function (input) { input.value = ''; });
+			}
 		});
 	}
 
