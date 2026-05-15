@@ -1,18 +1,22 @@
-/* XWoo Filter — Elementor widget styles */
+/* XWoo Filter — Elementor widget styles. Mobile-menu first. */
 
 .xwoo-filter-wrap {
 	--xwoo-accent: #af1f31;
-	--xwoo-anim: 220ms;
+	--xwoo-anim: 240ms;
 	--xwoo-drawer-width: 380px;
 	--xwoo-z-backdrop: 99998;
 	--xwoo-z-drawer: 99999;
+	--xwoo-row-divider: rgba(0,0,0,0.08);
+	--xwoo-row-hover: rgba(0,0,0,0.04);
+	--xwoo-row-active: rgba(0,0,0,0.06);
+	--xwoo-header-height: 56px;
 	box-sizing: border-box;
 }
 .xwoo-filter-wrap *,
 .xwoo-filter-wrap *::before,
 .xwoo-filter-wrap *::after { box-sizing: border-box; }
 
-/* ───── Trigger button ───── */
+/* ───── Trigger button (the "open menu" affordance) ───── */
 .xwoo-filter-trigger-wrap {
 	display: flex;
 	width: 100%;
@@ -21,7 +25,7 @@
 .xwoo-filter-trigger {
 	display: inline-flex;
 	align-items: center;
-	gap: 0.5em;
+	gap: 0.6em;
 	border: 1px solid currentColor;
 	background: transparent;
 	color: inherit;
@@ -29,23 +33,31 @@
 	font: inherit;
 	line-height: 1.2;
 	padding: 12px 20px;
-	border-radius: 6px;
-	transition: background-color var(--xwoo-anim), color var(--xwoo-anim), border-color var(--xwoo-anim);
+	min-height: 44px;
+	border-radius: 8px;
+	transition: background-color var(--xwoo-anim), color var(--xwoo-anim), border-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-appearance: none;
 	appearance: none;
+	-webkit-tap-highlight-color: transparent;
 }
-.xwoo-filter-trigger:hover,
-.xwoo-filter-trigger:focus-visible { outline: none; }
-.xwoo-filter-trigger-icon { display: inline-flex; align-items: center; line-height: 0; }
+.xwoo-filter-trigger:active { transform: scale(0.98); }
+.xwoo-filter-trigger:focus { outline: none; }
+.xwoo-filter-trigger-icon {
+	display: inline-flex;
+	align-items: center;
+	line-height: 0;
+	font-size: 1.1em;
+}
 .xwoo-filter-trigger-icon svg,
 .xwoo-filter-trigger-icon i { width: 1em; height: 1em; font-size: 1em; }
+.xwoo-filter-trigger-text { font-weight: 600; }
 .xwoo-filter-trigger-count {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	min-width: 1.5em;
 	height: 1.5em;
-	padding: 0 0.4em;
+	padding: 0 0.45em;
 	border-radius: 999px;
 	background: var(--xwoo-accent);
 	color: #fff;
@@ -55,15 +67,16 @@
 }
 .xwoo-filter-trigger-count[hidden] { display: none; }
 
-/* ───── Container ───── */
+/* ───── Inline container (used when display_mode = inline) ───── */
 .xwoo-filter { width: 100%; }
 .xwoo-filter-inline .xwoo-filter { background: transparent; }
 
-/* Tweak the underlying prdctfltr markup so it looks modern */
+/* ───── Section row: looks like an iOS/Android settings list item ───── */
 .xwoo-filter .prdctfltr_filter {
-	border-bottom: 1px solid rgba(0,0,0,0.08);
+	border-bottom: 1px solid var(--xwoo-row-divider);
 	padding: 0;
 	margin: 0;
+	background: transparent;
 }
 .xwoo-filter .prdctfltr_filter:last-child { border-bottom: none; }
 
@@ -72,18 +85,19 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 14px 16px;
+	padding: 16px 20px;
+	min-height: 56px;
 	cursor: default;
 	user-select: none;
 	margin: 0;
-	transition: background-color var(--xwoo-anim), color var(--xwoo-anim);
+	background: transparent;
+	transition: background-color var(--xwoo-anim);
+	-webkit-tap-highlight-color: transparent;
 }
-.xwoo-collapsible .xwoo-filter .pf-help-title {
-	cursor: pointer;
-}
-.xwoo-collapsible .xwoo-filter .pf-help-title:hover {
-	background-color: rgba(0,0,0,0.025);
-}
+.xwoo-collapsible .xwoo-filter .pf-help-title { cursor: pointer; }
+.xwoo-collapsible .xwoo-filter .pf-help-title:hover { background-color: var(--xwoo-row-hover); }
+.xwoo-collapsible .xwoo-filter .pf-help-title:active { background-color: var(--xwoo-row-active); }
+
 .xwoo-filter .pf-help-title .widget-title,
 .xwoo-filter .pf-help-title .prdctfltr_widget_title {
 	display: flex;
@@ -91,83 +105,124 @@
 	justify-content: space-between;
 	flex: 1;
 	margin: 0;
+	padding: 0;
 	font-weight: 600;
-	font-size: 15px;
+	font-size: 16px;
 	line-height: 1.3;
+	text-align: left;
 	transition: color var(--xwoo-anim);
 }
 
-/* Chevron */
+/* Chevron — rotates 180° when section is open */
 .xwoo-filter .prdctfltr-down,
 .xwoo-chevron {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 1em;
-	height: 1em;
+	width: 16px;
+	height: 16px;
 	margin-left: 0.5em;
 	transition: transform var(--xwoo-anim);
 	color: currentColor;
+	flex: 0 0 auto;
 }
 .xwoo-filter .prdctfltr-down::before,
 .xwoo-chevron::before {
 	content: '';
 	display: block;
-	width: 0.5em;
-	height: 0.5em;
+	width: 9px;
+	height: 9px;
 	border-right: 2px solid currentColor;
 	border-bottom: 2px solid currentColor;
 	transform: rotate(45deg) translate(-15%, -15%);
+	transform-origin: center;
 }
 .xwoo-collapsible .prdctfltr_filter.xwoo-open > .pf-help-title .prdctfltr-down,
 .xwoo-collapsible .prdctfltr_filter.xwoo-open > .pf-help-title .xwoo-chevron {
 	transform: rotate(180deg);
 }
 
-/* The expandable body */
+/* Smooth dropdown body — uses grid-template-rows trick for animation that adapts to content */
 .xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_scroll,
 .xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_inputs,
 .xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_range_wrapper {
-	overflow: hidden;
-	transition: max-height var(--xwoo-anim) ease, opacity var(--xwoo-anim);
-	max-height: 1500px;
+	display: grid;
+	grid-template-rows: 1fr;
+	transition: grid-template-rows var(--xwoo-anim) ease, opacity var(--xwoo-anim);
 	opacity: 1;
+}
+.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_scroll > *,
+.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_inputs > *,
+.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_range_wrapper > * {
+	min-height: 0;
+	overflow: hidden;
 }
 .xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_add_scroll,
 .xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_add_inputs,
 .xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_range_wrapper {
-	max-height: 0;
+	grid-template-rows: 0fr;
 	opacity: 0;
 	pointer-events: none;
 }
 
-/* Option rows */
+/* Fallback for browsers that can't animate grid-template-rows */
+@supports not (grid-template-rows: 1fr) {
+	.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_scroll,
+	.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_add_inputs,
+	.xwoo-collapsible .xwoo-filter .prdctfltr_filter > .prdctfltr_range_wrapper {
+		display: block;
+		max-height: 2000px;
+		overflow: hidden;
+		transition: max-height var(--xwoo-anim) ease;
+	}
+	.xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_add_scroll,
+	.xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_add_inputs,
+	.xwoo-collapsible .prdctfltr_filter.xwoo-closed > .prdctfltr_range_wrapper {
+		max-height: 0;
+	}
+}
+
+/* Option rows — big tap targets, full-width */
 .xwoo-filter .prdctfltr_checkboxes {
-	padding: 4px 16px 16px;
+	padding: 4px 20px 12px;
 }
 .xwoo-filter .prdctfltr_checkboxes label {
 	display: flex;
 	align-items: center;
-	gap: 0.5em;
-	padding: 4px 0;
+	gap: 0.75em;
+	padding: 12px 4px;
+	min-height: 44px;
+	margin: 0;
 	cursor: pointer;
-	border-radius: 4px;
+	border-radius: 6px;
+	border-bottom: 1px solid rgba(0,0,0,0.04);
 	transition: color var(--xwoo-anim), background-color var(--xwoo-anim);
+	-webkit-tap-highlight-color: transparent;
 }
-.xwoo-filter .prdctfltr_checkboxes label:hover {
-	background-color: rgba(0,0,0,0.025);
-}
+.xwoo-filter .prdctfltr_checkboxes label:last-child { border-bottom: none; }
+.xwoo-filter .prdctfltr_checkboxes label:hover { background-color: var(--xwoo-row-hover); }
+.xwoo-filter .prdctfltr_checkboxes label:active { background-color: var(--xwoo-row-active); }
+.xwoo-filter .prdctfltr_checkboxes label span { font-size: 15px; }
 .xwoo-filter .prdctfltr_checkboxes input[type="checkbox"],
 .xwoo-filter .prdctfltr_checkboxes input[type="radio"] {
 	accent-color: var(--xwoo-accent);
 	flex: 0 0 auto;
-	width: 16px;
-	height: 16px;
+	width: 20px;
+	height: 20px;
+	cursor: pointer;
 }
 
 /* Buttons inside the form */
 .xwoo-filter .prdctfltr_buttons {
-	padding: 12px 16px;
+	padding: 16px 20px;
+}
+.xwoo-filter .prdctfltr_buttons label {
+	display: flex;
+	align-items: center;
+	gap: 0.5em;
+	padding: 10px 0;
+	min-height: 44px;
+	cursor: pointer;
 }
 
 /* ───── Drawer / Full-screen overlay ───── */
@@ -211,6 +266,11 @@
 	visibility: visible;
 }
 
+/* Mobile: drawers go full width below this breakpoint */
+@media (max-width: 540px) {
+	.xwoo-mode-drawer .xwoo-filter-drawer { width: 100vw; }
+}
+
 .xwoo-filter-drawer-panel {
 	background: #fff;
 	color: inherit;
@@ -220,12 +280,15 @@
 	flex-direction: column;
 	box-shadow: 0 10px 40px rgba(0,0,0,0.18);
 }
+
+/* Drawer header (sticky title bar with close X) */
 .xwoo-filter-drawer-header {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 16px 20px;
-	border-bottom: 1px solid rgba(0,0,0,0.08);
+	padding: 0 16px;
+	min-height: var(--xwoo-header-height);
+	border-bottom: 1px solid var(--xwoo-row-divider);
 	flex: 0 0 auto;
 	background: inherit;
 	position: sticky;
@@ -234,32 +297,48 @@
 }
 .xwoo-filter-drawer-title {
 	font-size: 18px;
-	font-weight: 600;
+	font-weight: 700;
+	letter-spacing: -0.01em;
 }
 .xwoo-filter-close {
 	border: 0;
 	background: transparent;
 	cursor: pointer;
 	color: inherit;
-	padding: 6px;
+	padding: 10px;
+	margin: -10px;
 	line-height: 0;
-	border-radius: 4px;
+	border-radius: 50%;
+	width: 40px;
+	height: 40px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
 	transition: background-color var(--xwoo-anim);
+	-webkit-tap-highlight-color: transparent;
 }
-.xwoo-filter-close:hover { background-color: rgba(0,0,0,0.06); }
+.xwoo-filter-close:hover,
+.xwoo-filter-close:focus { background-color: rgba(0,0,0,0.06); }
 
 .xwoo-filter-drawer-body {
 	flex: 1 1 auto;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
 }
 
+/* Strip the drawer body padding from the inner filter so section rows reach the edge — feels much more native */
+.xwoo-filter-drawer-body .xwoo-filter { padding: 0 !important; background: transparent !important; }
+.xwoo-filter-drawer-body .xwoo-filter > .prdctfltr_wc { padding: 0; }
+.xwoo-filter-drawer-body .xwoo-filter form { margin: 0; }
+
+/* Drawer footer (sticky action bar) */
 .xwoo-filter-drawer-footer {
 	flex: 0 0 auto;
 	display: flex;
 	gap: 8px;
 	padding: 12px 16px;
-	border-top: 1px solid rgba(0,0,0,0.08);
+	border-top: 1px solid var(--xwoo-row-divider);
 	background: inherit;
 	position: sticky;
 	bottom: 0;
@@ -269,13 +348,17 @@
 	flex: 1;
 	border: 0;
 	cursor: pointer;
-	padding: 12px 16px;
-	border-radius: 6px;
+	padding: 14px 16px;
+	min-height: 48px;
+	border-radius: 8px;
 	font-weight: 600;
-	font-size: 14px;
+	font-size: 15px;
 	line-height: 1.2;
-	transition: background-color var(--xwoo-anim), color var(--xwoo-anim);
+	transition: background-color var(--xwoo-anim), color var(--xwoo-anim), transform 120ms ease;
+	-webkit-tap-highlight-color: transparent;
 }
+.xwoo-filter-reset:active,
+.xwoo-filter-apply:active { transform: scale(0.98); }
 .xwoo-filter-reset {
 	background: transparent;
 	color: inherit;
@@ -291,7 +374,7 @@
 /* Body lock while drawer open */
 body.xwoo-filter-locked { overflow: hidden; }
 
-/* ───── Mobile-force-drawer behavior ───── */
+/* ───── Mobile-force-drawer behavior for inline mode ───── */
 .xwoo-mode-inline .xwoo-mobile-only { display: none; }
 .xwoo-mode-inline.xwoo-mobile-drawer .xwoo-mobile-only { display: flex; }
 
@@ -309,7 +392,7 @@ body.xwoo-filter-locked { overflow: hidden; }
 		transition: transform var(--xwoo-anim) ease;
 		visibility: hidden;
 		overflow-y: auto;
-		padding-top: 56px;
+		padding-top: var(--xwoo-header-height);
 		box-shadow: 0 10px 40px rgba(0,0,0,0.18);
 	}
 	.xwoo-mode-inline.xwoo-mobile-drawer.xwoo-open .xwoo-filter-inline {
@@ -320,8 +403,9 @@ body.xwoo-filter-locked { overflow: hidden; }
 		content: '';
 		position: absolute;
 		top: 0; left: 0; right: 0;
-		height: 56px;
-		border-bottom: 1px solid rgba(0,0,0,0.08);
+		height: var(--xwoo-header-height);
+		border-bottom: 1px solid var(--xwoo-row-divider);
+		background: inherit;
 	}
 }
 @media (min-width: 922px) {

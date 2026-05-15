@@ -134,11 +134,11 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'label'       => esc_html__( 'Display Mode', 'prdctfltr' ),
 				'type'        => \Elementor\Controls_Manager::SELECT,
 				'options'     => array(
-					'inline'     => esc_html__( 'Inline (in place)', 'prdctfltr' ),
-					'drawer'     => esc_html__( 'Off-canvas drawer', 'prdctfltr' ),
+					'drawer'     => esc_html__( 'Off-canvas drawer (mobile-style menu)', 'prdctfltr' ),
 					'fullscreen' => esc_html__( 'Full-screen overlay', 'prdctfltr' ),
+					'inline'     => esc_html__( 'Inline (in place)', 'prdctfltr' ),
 				),
-				'default'     => 'inline',
+				'default'     => 'drawer',
 				'description' => esc_html__( 'Drawer/full-screen modes hide the filter behind a button until clicked.', 'prdctfltr' ),
 			)
 		);
@@ -223,7 +223,7 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'label'        => esc_html__( 'Start collapsed', 'prdctfltr' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
-				'default'      => '',
+				'default'      => 'yes',
 				'condition'    => array( 'collapsible' => 'yes' ),
 			)
 		);
@@ -234,7 +234,7 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'label'        => esc_html__( 'Accordion (only one open at a time)', 'prdctfltr' ),
 				'type'         => \Elementor\Controls_Manager::SWITCHER,
 				'return_value' => 'yes',
-				'default'      => '',
+				'default'      => 'yes',
 				'condition'    => array( 'collapsible' => 'yes' ),
 			)
 		);
