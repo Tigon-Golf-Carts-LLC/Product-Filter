@@ -325,34 +325,35 @@
 	box-shadow: 0 10px 40px rgba(0,0,0,0.18);
 }
 
-/* Drawer header (sticky title bar with close X pinned top-right) */
+/* Drawer header — flex with the close button shoved to the right edge */
 .xwoo-filter-drawer-header {
-	position: sticky;
-	top: 0;
+	position: sticky !important;
+	top: 0 !important;
 	z-index: 2;
-	padding: 0 56px 0 20px;
+	padding: 8px 12px 8px 20px !important;
 	min-height: var(--xwoo-header-height);
-	display: flex;
-	align-items: center;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: space-between !important;
 	border-bottom: 1px solid var(--xwoo-row-divider);
 	flex: 0 0 auto;
 	background: inherit;
+	gap: 12px;
 }
 .xwoo-filter-drawer-title {
 	font-size: 18px;
 	font-weight: 700;
 	letter-spacing: -0.01em;
-	flex: 1;
+	flex: 1 1 auto;
 	text-align: left;
+	min-width: 0;
 }
 .xwoo-filter-close {
-	position: absolute !important;
-	top: 12px !important;
-	right: 12px !important;
+	flex: 0 0 auto !important;
+	margin-left: auto !important;
 	width: 32px !important;
 	height: 32px !important;
 	padding: 0 !important;
-	margin: 0 !important;
 	border: 0 !important;
 	background: transparent !important;
 	background-color: transparent !important;
@@ -367,9 +368,9 @@
 	justify-content: center;
 	transition: background-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
-	z-index: 3;
 	min-height: 0 !important;
 	min-width: 0 !important;
+	font-size: 0 !important;
 }
 .xwoo-filter-close:hover,
 .xwoo-filter-close:focus {
@@ -377,7 +378,12 @@
 	color: var(--xwoo-accent) !important;
 }
 .xwoo-filter-close:active { transform: scale(0.92); }
-.xwoo-filter-close svg { width: 18px; height: 18px; stroke: currentColor; }
+.xwoo-filter-close svg {
+	width: 18px;
+	height: 18px;
+	stroke: currentColor;
+	display: block;
+}
 .xwoo-filter-close svg path { stroke: currentColor; }
 
 .xwoo-filter-drawer-body {
@@ -474,6 +480,37 @@ body.xwoo-filter-locked { overflow: hidden; }
 	.xwoo-mode-inline.xwoo-mobile-drawer .xwoo-filter-backdrop {
 		display: none;
 	}
+}
+
+/* ───── Elementor editor preview ─────
+   In the editor, JS doesn't always run (drawer never portals), and Elementor
+   forces position:fixed children into view in odd ways. Show the drawer as a
+   plain inline block so designers can actually see and configure it. */
+body.elementor-editor-active .xwoo-filter-drawer,
+.elementor-editor-preview .xwoo-filter-drawer {
+	position: relative !important;
+	top: auto !important;
+	bottom: auto !important;
+	left: auto !important;
+	right: auto !important;
+	width: 100% !important;
+	max-width: 100% !important;
+	height: auto !important;
+	transform: none !important;
+	visibility: visible !important;
+	display: flex !important;
+	box-shadow: none !important;
+	margin-top: 12px !important;
+	border: 1px dashed rgba(0,0,0,0.15);
+	border-radius: 8px;
+}
+body.elementor-editor-active .xwoo-filter-backdrop,
+.elementor-editor-preview .xwoo-filter-backdrop {
+	display: none !important;
+}
+body.elementor-editor-active .xwoo-filter-drawer-body,
+.elementor-editor-preview .xwoo-filter-drawer-body {
+	max-height: 480px;
 }
 
 /* Editor placeholder */
