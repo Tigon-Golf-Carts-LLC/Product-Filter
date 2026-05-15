@@ -348,7 +348,9 @@
 	.xwoo-mode-drawer .xwoo-filter-drawer { width: 100vw !important; }
 }
 
+/* Drawer panel — relative so the close button can absolute-position to its corner */
 .xwoo-filter-drawer-panel {
+	position: relative !important;
 	background: #fff;
 	color: inherit;
 	width: 100%;
@@ -358,20 +360,18 @@
 	box-shadow: 0 10px 40px rgba(0,0,0,0.18);
 }
 
-/* Drawer header — flex with the close button shoved to the right edge */
+/* Drawer header — title only; close button sits absolutely over the corner */
 .xwoo-filter-drawer-header {
 	position: sticky !important;
 	top: 0 !important;
 	z-index: 2;
-	padding: 8px 12px 8px 20px !important;
+	padding: 14px 56px 14px 20px !important;
 	min-height: var(--xwoo-header-height);
 	display: flex !important;
 	align-items: center !important;
-	justify-content: space-between !important;
 	border-bottom: 1px solid var(--xwoo-row-divider);
 	flex: 0 0 auto;
 	background: inherit;
-	gap: 12px;
 }
 .xwoo-filter-drawer-title {
 	font-size: 18px;
@@ -381,43 +381,64 @@
 	text-align: left;
 	min-width: 0;
 }
-.xwoo-filter-close {
-	flex: 0 0 auto !important;
-	margin-left: auto !important;
+
+/* Close button — pinned to top-right of the panel.
+   High-specificity overrides (.xwoo-filter-drawer-panel > .xwoo-filter-drawer-header > button.xwoo-filter-close)
+   plus !important on every Astra/Woo-touched property so theme button rules can't recolour or resize it. */
+button.xwoo-filter-close,
+.xwoo-filter-drawer-panel button.xwoo-filter-close,
+.xwoo-filter-drawer button.xwoo-filter-close,
+.xwoo-filter-drawer-header > button.xwoo-filter-close {
+	position: absolute !important;
+	top: 12px !important;
+	right: 12px !important;
+	left: auto !important;
+	bottom: auto !important;
 	width: 32px !important;
 	height: 32px !important;
+	min-width: 0 !important;
+	min-height: 0 !important;
+	max-width: none !important;
+	max-height: none !important;
 	padding: 0 !important;
+	margin: 0 !important;
 	border: 0 !important;
 	background: transparent !important;
 	background-color: transparent !important;
 	background-image: none !important;
 	box-shadow: none !important;
 	color: var(--xwoo-accent) !important;
-	cursor: pointer;
-	line-height: 0;
-	border-radius: 50%;
+	cursor: pointer !important;
+	line-height: 0 !important;
+	border-radius: 50% !important;
 	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
+	align-items: center !important;
+	justify-content: center !important;
 	transition: background-color var(--xwoo-anim), transform 120ms ease;
 	-webkit-tap-highlight-color: transparent;
-	min-height: 0 !important;
-	min-width: 0 !important;
+	z-index: 3;
 	font-size: 0 !important;
+	float: none !important;
+	text-transform: none !important;
+	letter-spacing: 0 !important;
+	white-space: nowrap !important;
 }
-.xwoo-filter-close:hover,
-.xwoo-filter-close:focus {
+button.xwoo-filter-close:hover,
+button.xwoo-filter-close:focus,
+.xwoo-filter-drawer-panel button.xwoo-filter-close:hover,
+.xwoo-filter-drawer-panel button.xwoo-filter-close:focus {
 	background-color: rgba(0,0,0,0.06) !important;
 	color: var(--xwoo-accent) !important;
 }
-.xwoo-filter-close:active { transform: scale(0.92); }
-.xwoo-filter-close svg {
-	width: 18px;
-	height: 18px;
-	stroke: currentColor;
-	display: block;
+button.xwoo-filter-close:active { transform: scale(0.92); }
+button.xwoo-filter-close svg {
+	width: 18px !important;
+	height: 18px !important;
+	stroke: currentColor !important;
+	fill: none !important;
+	display: block !important;
 }
-.xwoo-filter-close svg path { stroke: currentColor; }
+button.xwoo-filter-close svg path { stroke: currentColor !important; }
 
 .xwoo-filter-drawer-body {
 	flex: 1 1 auto;
@@ -516,35 +537,9 @@ body.xwoo-filter-locked { overflow: hidden; }
 }
 
 /* ───── Elementor editor preview ─────
-   In the editor, JS doesn't always run (drawer never portals), and Elementor
-   forces position:fixed children into view in odd ways. Show the drawer as a
-   plain inline block so designers can actually see and configure it. */
-body.elementor-editor-active .xwoo-filter-drawer,
-.elementor-editor-preview .xwoo-filter-drawer {
-	position: relative !important;
-	top: auto !important;
-	bottom: auto !important;
-	left: auto !important;
-	right: auto !important;
-	width: 100% !important;
-	max-width: 100% !important;
-	height: auto !important;
-	transform: none !important;
-	visibility: visible !important;
-	display: flex !important;
-	box-shadow: none !important;
-	margin-top: 12px !important;
-	border: 1px dashed rgba(0,0,0,0.15);
-	border-radius: 8px;
-}
-body.elementor-editor-active .xwoo-filter-backdrop,
-.elementor-editor-preview .xwoo-filter-backdrop {
-	display: none !important;
-}
-body.elementor-editor-active .xwoo-filter-drawer-body,
-.elementor-editor-preview .xwoo-filter-drawer-body {
-	max-height: 480px;
-}
+   We let the drawer/popup behave the same in editor and live: hidden until the
+   trigger is clicked. Designers click the trigger to open and configure it.
+   No special inline-mode override here anymore. */
 
 /* Editor placeholder */
 .xwoo-filter-placeholder {
