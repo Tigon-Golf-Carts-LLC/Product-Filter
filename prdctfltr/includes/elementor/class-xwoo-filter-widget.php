@@ -349,6 +349,24 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 			)
 		);
 
+		$this->add_responsive_control(
+			'trigger_icon_size',
+			array(
+				'label'      => esc_html__( 'Icon Size', 'prdctfltr' ),
+				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => array( 'px', 'em' ),
+				'range'      => array(
+					'px' => array( 'min' => 10, 'max' => 64 ),
+					'em' => array( 'min' => 0.5, 'max' => 4, 'step' => 0.1 ),
+				),
+				'default'    => array( 'unit' => 'px', 'size' => 20 ),
+				'selectors'  => array(
+					'{{WRAPPER}} .xwoo-filter-trigger-icon' => 'font-size: {{SIZE}}{{UNIT}};',
+					'{{WRAPPER}} .xwoo-filter-trigger-icon svg, {{WRAPPER}} .xwoo-filter-trigger-icon i' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}}; font-size: {{SIZE}}{{UNIT}};',
+				),
+			)
+		);
+
 		$this->add_control(
 			'trigger_show_count',
 			array(
@@ -774,6 +792,7 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'default'   => '#ffffff',
 				'selectors' => array(
 					'{{WRAPPER}} .xwoo-filter-drawer-panel' => 'background-color: {{VALUE}};',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-drawer-panel' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -786,6 +805,7 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'default'   => 'rgba(0,0,0,0.55)',
 				'selectors' => array(
 					'{{WRAPPER}} .xwoo-filter-backdrop' => 'background-color: {{VALUE}};',
+					'.xwoo-filter-backdrop[data-xwoo-owner="xwoo-filter-{{ID}}"]' => 'background-color: {{VALUE}};',
 				),
 			)
 		);
@@ -799,20 +819,101 @@ class XWoo_Filter_Widget extends \Elementor\Widget_Base {
 				'default'   => array( 'unit' => 'px', 'size' => 4 ),
 				'selectors' => array(
 					'{{WRAPPER}} .xwoo-filter-backdrop' => 'backdrop-filter: blur({{SIZE}}px); -webkit-backdrop-filter: blur({{SIZE}}px);',
+					'.xwoo-filter-backdrop[data-xwoo-owner="xwoo-filter-{{ID}}"]' => 'backdrop-filter: blur({{SIZE}}px); -webkit-backdrop-filter: blur({{SIZE}}px);',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'close_icon_size',
+			array(
+				'label'      => esc_html__( 'Close Icon Size', 'prdctfltr' ),
+				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 8, 'max' => 48 ) ),
+				'default'    => array( 'unit' => 'px', 'size' => 18 ),
+				'selectors'  => array(
+					'{{WRAPPER}} .xwoo-filter-close svg, {{WRAPPER}} .xwoo-filter-close i' => 'width: {{SIZE}}{{UNIT}} !important; height: {{SIZE}}{{UNIT}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close svg, .xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close i' => 'width: {{SIZE}}{{UNIT}} !important; height: {{SIZE}}{{UNIT}} !important;',
+				),
+			)
+		);
+
+		$this->add_responsive_control(
+			'close_button_size',
+			array(
+				'label'      => esc_html__( 'Close Button Size (tap target)', 'prdctfltr' ),
+				'type'       => \Elementor\Controls_Manager::SLIDER,
+				'size_units' => array( 'px' ),
+				'range'      => array( 'px' => array( 'min' => 24, 'max' => 64 ) ),
+				'default'    => array( 'unit' => 'px', 'size' => 32 ),
+				'selectors'  => array(
+					'{{WRAPPER}} .xwoo-filter-close' => 'width: {{SIZE}}{{UNIT}} !important; height: {{SIZE}}{{UNIT}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close' => 'width: {{SIZE}}{{UNIT}} !important; height: {{SIZE}}{{UNIT}} !important;',
+				),
+			)
+		);
+
+		$this->start_controls_tabs( 'close_state_tabs' );
+
+		$this->start_controls_tab( 'close_normal_tab', array( 'label' => esc_html__( 'Normal', 'prdctfltr' ) ) );
+
+		$this->add_control(
+			'close_color',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'prdctfltr' ),
+				'type'      => \Elementor\Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .xwoo-filter-close' => 'color: {{VALUE}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close' => 'color: {{VALUE}} !important;',
 				),
 			)
 		);
 
 		$this->add_control(
-			'close_color',
+			'close_bg',
 			array(
-				'label'     => esc_html__( 'Close Button Color', 'prdctfltr' ),
+				'label'     => esc_html__( 'Background Color', 'prdctfltr' ),
 				'type'      => \Elementor\Controls_Manager::COLOR,
+				'default'   => '',
 				'selectors' => array(
-					'{{WRAPPER}} .xwoo-filter-close' => 'color: {{VALUE}};',
+					'{{WRAPPER}} .xwoo-filter-close' => 'background-color: {{VALUE}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close' => 'background-color: {{VALUE}} !important;',
 				),
 			)
 		);
+
+		$this->end_controls_tab();
+
+		$this->start_controls_tab( 'close_hover_tab', array( 'label' => esc_html__( 'Hover', 'prdctfltr' ) ) );
+
+		$this->add_control(
+			'close_color_hover',
+			array(
+				'label'     => esc_html__( 'Icon Color', 'prdctfltr' ),
+				'type'      => \Elementor\Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .xwoo-filter-close:hover, {{WRAPPER}} .xwoo-filter-close:focus' => 'color: {{VALUE}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close:hover, .xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close:focus' => 'color: {{VALUE}} !important;',
+				),
+			)
+		);
+
+		$this->add_control(
+			'close_bg_hover',
+			array(
+				'label'     => esc_html__( 'Background Color', 'prdctfltr' ),
+				'type'      => \Elementor\Controls_Manager::COLOR,
+				'selectors' => array(
+					'{{WRAPPER}} .xwoo-filter-close:hover, {{WRAPPER}} .xwoo-filter-close:focus' => 'background-color: {{VALUE}} !important;',
+					'.xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close:hover, .xwoo-filter-drawer[data-xwoo-owner="xwoo-filter-{{ID}}"] .xwoo-filter-close:focus' => 'background-color: {{VALUE}} !important;',
+				),
+			)
+		);
+
+		$this->end_controls_tab();
+
+		$this->end_controls_tabs();
 
 		$this->add_control(
 			'drawer_title',
