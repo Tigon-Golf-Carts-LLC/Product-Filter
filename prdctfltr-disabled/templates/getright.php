@@ -2,6 +2,13 @@
 
 	if ( ! defined( 'ABSPATH' ) ) exit;
 
+	// Bail if the frontend class wasn't loaded (e.g. WC template is being rendered
+	// in an admin context like the Elementor editor, where pf-frontend.php is not included).
+	// Without this guard, referencing the class statically below throws a fatal error.
+	if ( ! class_exists( 'XforWC_Product_Filters_Frontend' ) ) {
+		return false;
+	}
+
 	if ( isset( XforWC_Product_Filters_Frontend::$settings['template'] ) ) {
 
 		switch ( XforWC_Product_Filters_Frontend::$settings['template'] ) {

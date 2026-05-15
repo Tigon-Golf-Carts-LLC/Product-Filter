@@ -267,7 +267,7 @@ if ( !class_exists( 'XforWC_Product_Filters' ) ) :
 					'separate_items_with_commas' => esc_html__( 'Separate', 'prdctfltr' ) . ' ' . $taxonomy_plural . ' ' . esc_html__( 'with commas', 'prdctfltr' ),
 					'add_or_remove_items'        => esc_html__( 'Add or remove', 'prdctfltr' ) . ' ' . $taxonomy_plural,
 					'choose_from_most_used'      => esc_html__( 'Choose from the most used', 'prdctfltr' ) . ' ' . $taxonomy_plural,
-					'not_found'                  => esc_html__( 'No', 'prdctfltr' ) . ' ' . $taxonomy_plural . ' ' . esc_html__( 'found', 'prdctfltr' ),esc_html__( 'No Characteristics found', 'prdctfltr' ),
+					'not_found'                  => esc_html__( 'No', 'prdctfltr' ) . ' ' . $taxonomy_plural . ' ' . esc_html__( 'found', 'prdctfltr' ),
 					'menu_name'                  => $taxonomy_plural
 				);
 

@@ -4,6 +4,13 @@
 	if ( apply_filters( 'prdctfltr_show_filter', true ) === false ) {
 		return false;
 	}
+
+	// Defensive: this template references XforWC_Product_Filters_Frontend statically.
+	// If included in a context where the class isn't loaded (e.g. WC template
+	// rendering inside Elementor's admin editor), bail rather than fatal.
+	if ( ! class_exists( 'XforWC_Product_Filters_Frontend' ) ) {
+		return false;
+	}
 ?>
 
 <?php do_action( 'prdctfltr_filter_hooks' ); ?>
